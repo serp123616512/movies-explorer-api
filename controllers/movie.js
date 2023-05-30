@@ -8,7 +8,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user })
     .populate('owner')
     .then((movies) => {
       res.status(http2.constants.HTTP_STATUS_OK).send(movies);
