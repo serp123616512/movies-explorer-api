@@ -51,15 +51,8 @@ const postMovie = async (req, res, next) => {
     return res.status(http2.constants.HTTP_STATUS_CREATED).send(movie);
   } catch (err) {
     if (err instanceof ValidationError) {
-      if (err.errors.image) {
-        return next(new BadRequestError(err.errors.image.properties.message));
-      }
-      if (err.errors.trailerLink) {
-        return next(new BadRequestError(err.errors.trailerLink.properties.message));
-      }
-      if (err.errors.thumbnail) {
-        return next(new BadRequestError(err.errors.thumbnail.properties.message));
-      }
+      const message = Object.values(err.errors).map((error) => error.message).join(', ');
+      return next(new BadRequestError(message));
     }
     return next(err);
   }

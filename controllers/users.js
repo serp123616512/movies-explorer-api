@@ -38,7 +38,8 @@ const postUser = async (req, res, next) => {
     return res.status(http2.constants.HTTP_STATUS_CREATED).send(user);
   } catch (err) {
     if (err instanceof ValidationError) {
-      return next(new BadRequestError(err.errors.email.properties.message));
+      const message = Object.values(err.errors).map((error) => error.message).join(', ');
+      return next(new BadRequestError(message));
     }
     if (err.code === 11000) {
       return next(new ConflictError('Пользователь с таким email уже существует'));
@@ -57,6 +58,7 @@ const signIn = (req, res, next) => {
           maxAge: 3600000,
           httpOnly: true,
           sameSite: 'none',
+          secure: true,
         })
         .send({ message: 'Авторизация прошла успешно' });
     })
@@ -68,6 +70,7 @@ const signOut = (req, res) => {
     .clearCookie('jwt', {
       httpOnly: true,
       sameSite: 'none',
+      secure: true,
     })
     .send({ message: 'Выход произведен' });
 };
@@ -79,7 +82,12 @@ const patchUser = (req, res, next) => {
     .then((user) => {
       res.status(http2.constants.HTTP_STATUS_OK).send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с таким email уже существует'));
+      }
+      return next(err);
+    });
 };
 
 module.exports = {
