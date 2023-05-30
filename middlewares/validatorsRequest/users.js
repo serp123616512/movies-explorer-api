@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 const validationPostUser = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
     name: Joi.string().required().min(2).max(30),
   }),
 });
@@ -11,7 +11,7 @@ const validationPostUser = celebrate({
 const validationSignIn = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 });
 
