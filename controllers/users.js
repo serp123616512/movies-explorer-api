@@ -57,7 +57,7 @@ const signIn = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: 3600000,
           httpOnly: true,
-          sameSite: 'none',
+          sameSite: 'lax',
           secure: true,
         })
         .send({ message: 'Авторизация прошла успешно' });
@@ -69,7 +69,7 @@ const signOut = (req, res) => {
   res
     .clearCookie('jwt', {
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: 'lax',
       secure: true,
     })
     .send({ message: 'Выход произведен' });
